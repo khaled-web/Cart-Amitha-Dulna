@@ -11,8 +11,10 @@ const CustomError = require('../errors/index.js')
 //createProduct
 const createProduct = async (req, res) => {
  const cart = await Cart.create(req.body)
+ const token = cart.createJWT()
  res.status(StatusCodes.CREATED).json({
-  cart
+  product: cart,
+  token
  })
 }
 
@@ -21,7 +23,7 @@ const getAllProducts = async (req, res) => {
  const cart = await Cart.find({})
  res.status(StatusCodes.OK).json({
   count: cart.length,
-  cart
+  products: cart
  })
 }
 

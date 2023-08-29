@@ -3,31 +3,22 @@
 //.............
 
 import React, {
- useState,
  useReducer,
- useContext,
- useEffect
+ useContext
 } from 'react';
 import {
  DISPLAY_ALERT,
+ DISPLAY_ALERT_ID,
  CLEAR_ALERT,
- REGISTER_USER_BEGIN,
- REGISTER_USER_SUCCESS,
- REGISTER_USER_ERROR,
- LOGIN_USER_BEGIN,
- LOGIN_USER_SUCCESS,
- LOGIN_USER_ERROR,
- SETUP_USER_BEGIN,
- SETUP_USER_SUCCESS,
- SETUP_USER_ERROR,
- TOGGLE_SIDEBAR,
- LOGOUT_USER,
- UPDATE_USER_BEGIN,
- UPDATE_USER_SUCCESS,
- UPDATE_USER_ERROR,
- HANDLE_CHANGE,
- CLEAR_VALUES,
-
+ CREATE_PRODUCT_BEGIN,
+ CREATE_PRODUCT_SUCCESS,
+ CREATE_PRODUCT_ERROR,
+ DELETE_PRODUCT_BEGIN,
+ DELETE_PRODUCT_SUCCESS,
+ DELETE_PRODUCT_ERROR,
+ GET_PRODUCT_BEGIN,
+ GET_PRODUCT_SUCCESS,
+ GET_PRODUCT_ERROR
 } from './action';
 import reducer from './reducer'
 import axios from 'axios'
@@ -37,19 +28,23 @@ import axios from 'axios'
 //.............
 
 const token = localStorage.getItem('token')
-const user = localStorage.getItem('user')
-const userLocation = localStorage.getItem('location')
+const product = localStorage.getItem('product')
+const id = localStorage.getItem('id')
+
 
 //initialState
 const initialState = {
   //authIssues
  isLoading: false,
  showAlert: false,
+ showAlertId:false,
+ showAlertProduct:false,
  alertText: '',
  alertType: '',
- user:user ? JSON.parse(user) : null,
  token:token,
- showSidebar:false,
+ product:product,
+ id:id,
+ products:[]
 }
 
 //AppContext
@@ -59,9 +54,14 @@ const AppContext = React.createContext();
 const AppProvider = ({children})=>{
  const [state, dispatch]=useReducer(reducer, initialState);
 
- //displayAlert-Function
+ //displayAlert
  const displayAlert = ()=>{
   dispatch({type:DISPLAY_ALERT})
+  clearAlert()
+ }
+ //displayAlertId
+ const displayAlertId = ()=>{
+  dispatch({type:DISPLAY_ALERT_ID})
   clearAlert()
  }
 
@@ -71,55 +71,75 @@ const AppProvider = ({children})=>{
    dispatch({type:CLEAR_ALERT})
   },3000)
  }
+  //addProductToLocalStorage
+  const addProductToLocalStorage = ({product, token, id})=>{
+    localStorage.setItem('token', token)
+    localStorage.setItem('product', product)
+    localStorage.setItem('id', id)
+  }
 
- //localStorage
- const addUserToLocalStorage =({user, token, location})=>{
-  localStorage.setItem('user', JSON.stringify(user))
-  localStorage.setItem('token', token)
-  localStorage.setItem('location', location)
- }
-
- const removeUserFromLocalStorage = ()=>{
-  localStorage.removeItem('user')
-  localStorage.removeItem('token')
-  localStorage.removeItem('location')
- }
-
- //registerUser
- const registerUser = async (currentUser)=>{}
-
- //loginUser
- const loginUser = async(currentUser)=>{}
-
-  //setupUser
- const setupUser = async({currentUser, endPoint, alertText})=>{}
-
-  //Toggle-sidebar
-  const toggleSidebar = ()=>{}
-
-  //logout_user
-  const logoutUser = ()=>{}
-
-  //update_user
-  const updateUser = async(currentUser)=>{}
-
-  //handleChange
-  const handleChange = ({name, value})=>{}
-
-  //clearValue
-  const clearValue = ()=>{}
+  //CreateProduct
+  const createProduct = async(productInfo)=>{
+    dispatch({type:CREATE_PRODUCT_BEGIN})
+    try {      
+      const response = await axios.post('http://localhost:5000/api/v1',productInfo)
+      const {token, product} = response.data
+      dispatch({
+        type:CREATE_PRODUCT_SUCCESS,
+        payload:{token,product}
+      })
+      addProductToLocalStorage({
+        token:token,
+        product:product.name,
+        id:product._id
+      })
+    } catch (error) {
+      dispatch({
+        type:CREATE_PRODUCT_ERROR,
+        payload:{
+          msg:error.response.data.msg
+        }
+      })
+    }
+    clearAlert()
+  }
+  //deleteProduct
+  const deleteProduct = async(id)=>{
+    dispatch({type:DELETE_PRODUCT_BEGIN})
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/v1/${id}`)
+      console.log(response)
+      dispatch({type:DELETE_PRODUCT_SUCCESS})
+    } catch (error) {
+      dispatch({type:DELETE_PRODUCT_ERROR,payload:error.response.data})
+    }
+    clearAlert()
+  }
+  //getAllProducts
+  const getAllProducts = async()=>{
+    dispatch({type:GET_PRODUCT_BEGIN})
+    try {
+      const response = await axios.get('http://localhost:5000/api/v1')
+      // console.log(response)
+      const{products} = response.data
+      dispatch({
+        type:GET_PRODUCT_SUCCESS,
+        payload:{products}
+      })
+      
+    } catch (error) {
+      dispatch({type:GET_PRODUCT_ERROR})
+    }
+  }
+ 
 
   return <AppContext.Provider value={{
   ...state, 
   displayAlert, 
-  registerUser,
-  loginUser,
-  setupUser, 
-  toggleSidebar, 
-  logoutUser,
-  updateUser,
-  handleChange,
-  clearValue, 
+  displayAlertId,
+  createProduct,
+  deleteProduct,
+  getAllProducts
   }}>
   {children}
  </AppContext.Provider>

@@ -7,6 +7,7 @@ import Navbar from './Navbar';
 import FormRowSelect from './FormRowSelect';
 import SearchContainer from './SearchContainer';
 import Loading from './Loading'
+import AlertID from './AlertID'
 
 
 export {
@@ -19,4 +20,5 @@ export {
  FormRowSelect,
  SearchContainer,
  Loading,
+ AlertID
 }

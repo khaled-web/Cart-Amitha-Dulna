@@ -1,4 +1,8 @@
+main{
+  display:grid;
+  justify-content: left;
 
+}
         form {
           display: flex;
           flex-direction: column;

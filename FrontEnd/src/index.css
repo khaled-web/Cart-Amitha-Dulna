@@ -42,7 +42,13 @@ html {
   --red-dark: #842029;
   --green-light: #d1e7dd;
   --green-dark: #0f5132;
-
+  /* Alert */
+  --clr-red-dark:#842029;
+  --red-light: #f8d7da;
+  --red-dark: #842029;
+  --clr-red-light:#f8d7da;
+  --clr-green-dark: #0f5132;
+  --clr-green-light: #d1e7dd;
   /* fonts  */
   --headingFont: 'Roboto Condensed', Sans-Serif;
   --bodyFont: 'Cabin', Sans-Serif;
@@ -69,8 +75,26 @@ html {
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-        body {
-          font-family: Arial, sans-serif;
-          margin: 20px;
-        }
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+/* Alert */
+.alert {
+  padding: 0.375rem 0.75rem;
+  margin-bottom: 1rem;
+  border-color: transparent;
+  border-radius: var(--borderRadius);
+  text-align: center;
+  letter-spacing: var(--letterSpacing);
+}
+
+.alert-danger {
+  color: var(--red-dark);
+  background: var(--red-light);
+}
+.alert-success {
+  color: var(--clr-green-dark);
+  background: var(--clr-green-light);
+}
     

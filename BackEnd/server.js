@@ -1,6 +1,7 @@
 //..............
 //importingData
 //..............
+const cors = require('cors')
 //express
 const express = require('express');
 const app = express()
@@ -27,6 +28,8 @@ const errorHandlerMiddleware = require('./middleware/error-handler.js')
 if (process.env.NODE_ENV !== 'production') {
  app.use(morgan('dev'))
 }
+//cors-fetchingData
+app.use(cors())
 //usingData.jsonInPostman
 app.use(express.json())
 //GeneralRoute
