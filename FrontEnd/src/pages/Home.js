@@ -74,7 +74,7 @@ const onSubmitID = (e)=>{
         const {_id:id, name, inventory}=product
         return(
           <li key={id}>
-            <p>Product:{name} - No.{inventory} </p>
+            <p>Product:-{name} - No:-{inventory} </p>
           </li>
         )
         
